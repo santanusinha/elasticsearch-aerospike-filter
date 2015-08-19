@@ -7,8 +7,11 @@ import com.aerospike.client.policy.BatchPolicy;
 import com.example.esas.aerospike.AerospikeConnection;
 import org.elasticsearch.common.base.Strings;
 import org.elasticsearch.common.collect.Lists;
+import org.elasticsearch.common.inject.Inject;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.support.XContentMapValues;
 import org.elasticsearch.index.fielddata.ScriptDocValues;
+import org.elasticsearch.node.Node;
 import org.elasticsearch.script.AbstractSearchScript;
 import org.elasticsearch.script.ExecutableScript;
 import org.elasticsearch.script.NativeScriptFactory;
@@ -29,8 +32,11 @@ public class CheckScript extends AbstractSearchScript {
 
         private AerospikeClient aerospikeClient;
 
-        public Factory() {
-            this.aerospikeClient = AerospikeConnection.INSTANCE.getAerospikeClient();
+        @Inject
+        public Factory(Node node, Settings settings) {
+            final String aerospikeHost = settings.get("checker.aerospike.host");
+            final int aerospikePort = settings.getAsInt("checker.aerospike.port", -1);
+            this.aerospikeClient = new AerospikeClient(aerospikeHost, aerospikePort);
         }
 
         @Override
@@ -44,6 +50,15 @@ public class CheckScript extends AbstractSearchScript {
                 throw new ScriptException("Missing the value parameter");
             }
             return new CheckScript(fieldName, value, aerospikeClient);
+        }
+
+        @Override
+        protected void finalize() throws Throwable {
+            super.finalize();
+            if(null != aerospikeClient) {
+                aerospikeClient.close();
+                System.out.println("Closing client");
+            }
         }
     }
 

@@ -21,11 +21,11 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 public class App {
     public static void main(String[] args) {
 
-        //MUST BE DONE BEFORE SETTING UP THE CLIENT
-        AerospikeConnection.INSTANCE.connect();
 
         Settings settings = ImmutableSettings.builder()
                 .put("script.native.checker.type", CheckScript.Factory.class)
+                .put("checker.aerospike.host", "172.28.128.3") //Settings for connecting from factory
+                .put("checker.aerospike.port", 3000)
                 .build();
         Node node = nodeBuilder()
                 .settings(settings)
@@ -79,6 +79,8 @@ public class App {
             return;
         }
         System.out.println("No record found as expected");
+        //MUST BE DONE BEFORE SETTING UP THE CLIENT
+        AerospikeConnection.INSTANCE.connect();
         WritePolicy writePolicy = new WritePolicy();
         writePolicy.commitLevel = CommitLevel.COMMIT_ALL;
         writePolicy.recordExistsAction = RecordExistsAction.UPDATE;
