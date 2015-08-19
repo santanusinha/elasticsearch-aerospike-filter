@@ -10,6 +10,7 @@ This sample project uses the native script functionality to inject a filter that
  - Use the node client to connect to elasticsearch (This is anyways recommended).
  - Keep the Aerospike connection in a singleton
  - Make sure that the instantiation of the singleton happens before the ES connection is establised (long live dependency injection!!)
+
 ## Caveats
 
 - Since this is a script filter it gets documents one by one. Will see if we can optimize this somehow.
