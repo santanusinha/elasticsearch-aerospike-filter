@@ -1,7 +1,7 @@
 # Background
-As nice as ES is, index refreshes are a pain. The features it provides far outweigh this drawback.
+As nice as ES is, index refreshes are a pain. However, the features it provides far outweigh this (minor in most cases) drawback.
 
-However, there are unavoidable real-time scenarios where we need to check values in some transactional DB like redis or aerospike etc to filter out unwanted components. The transactional system gets updated faster or at a different rate than ES refresh. 
+However, there are unavoidable real-time scenarios where we need to check values in some transactional DB like redis or aerospike etc to filter out unwanted documents. The transactional system gets updated faster or at a different rate than ES refresh. 
 
 This sample project uses the native script functionality to inject a filter that queries aerospike to determine whether to accept a result or not.
 
